@@ -1,4 +1,6 @@
 let scene, camera, renderer, player, enemies = [], bullets = [];
+let enemySpeed = 0.02;
+let score = 0;
 const enemyRows = 3, enemyCols = 8;
 
 function init() {
@@ -37,13 +39,27 @@ function init() {
 
     // Position camera
     camera.position.z = 15;
+
+    // Score display
+    const scoreDisplay = document.createElement('div');
+    scoreDisplay.style.position = 'absolute';
+    scoreDisplay.style.color = 'white';
+    scoreDisplay.style.top = '10px';
+    scoreDisplay.style.left = '10px';
+    scoreDisplay.innerHTML = `Score: ${score}`;
+    document.body.appendChild(scoreDisplay);
+
+    // Add touch events
+    document.addEventListener('touchstart', onTouchStart, false);
+    document.addEventListener('touchmove', onTouchMove, false);
+    document.addEventListener('touchend', onTouchEnd, false);
 }
 
 function animate() {
     requestAnimationFrame(animate);
-
-    // Add game logic here (e.g., moving enemies, detecting collisions)
-
+    updateBullets();
+    moveEnemies();
+    checkCollisions();
     renderer.render(scene, camera);
 }
 
@@ -81,6 +97,22 @@ function updateBullets() {
     }
 }
 
+function moveEnemies() {
+    let reverse = false;
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].position.x += enemySpeed;
+        if (enemies[i].position.x > 9 || enemies[i].position.x < -9) {
+            reverse = true;
+        }
+    }
+    if (reverse) {
+        enemySpeed = -enemySpeed;
+        for (let i = 0; i < enemies.length; i++) {
+            enemies[i].position.y -= 0.5;
+        }
+    }
+}
+
 function checkCollisions() {
     for (let i = bullets.length - 1; i >= 0; i--) {
         for (let j = enemies.length - 1; j >= 0; j--) {
@@ -89,21 +121,46 @@ function checkCollisions() {
                 bullets.splice(i, 1);
                 scene.remove(enemies[j]);
                 enemies.splice(j, 1);
+                score += 100;
+                updateScore();
                 break;
             }
         }
     }
 }
 
+function updateScore() {
+    const scoreDisplay = document.querySelector('div');
+    scoreDisplay.innerHTML = `Score: ${score}`;
+}
+
+// Touch controls
+let initialTouchX = null;
+
+function onTouchStart(event) {
+    if (event.touches.length === 1) {
+        initialTouchX = event.touches[0].clientX;
+        shootBullet();
+    }
+}
+
+function onTouchMove(event) {
+    if (event.touches.length === 1 && initialTouchX !== null) {
+        let currentTouchX = event.touches[0].clientX;
+        let deltaX = currentTouchX - initialTouchX;
+
+        // Move player
+        const speed = 0.05;
+        player.position.x += deltaX * speed;
+        player.position.x = Math.max(Math.min(player.position.x, 9), -9); // Stay within bounds
+        initialTouchX = currentTouchX; // Update the initial touch position
+    }
+}
+
+function onTouchEnd(event) {
+    initialTouchX = null;
+}
+
 init();
 animate();
 document.addEventListener('keydown', onKeyDown);
-
-// Add these function calls to your animate() function
-function animate() {
-    requestAnimationFrame(animate);
-    updateBullets();
-    checkCollisions();
-    renderer.render(scene, camera);
-}
-
