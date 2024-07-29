@@ -14,7 +14,7 @@ function init() {
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
     // Adjust the camera position and rotation
-    camera.position.set(0, -5, 15); // Move the camera closer and slightly above the player
+    camera.position.set(0, -5, 15); // Initial position of the camera
     camera.lookAt(0, -10, 0); // Look at the player's initial position
 
     renderer = new THREE.WebGLRenderer();
@@ -88,7 +88,16 @@ function animate() {
     moveEnemies();
     checkCollisions();
     controls.update(); // Update controls for damping
+    cameraFollowPlayer(); // Ensure the camera follows the player
     renderer.render(scene, camera);
+}
+
+// Function to make the camera follow the player from behind
+function cameraFollowPlayer() {
+    if (player) {
+        camera.position.set(player.position.x, player.position.y - 5, player.position.z + 15);
+        camera.lookAt(player.position);
+    }
 }
 
 function onKeyDown(event) {
