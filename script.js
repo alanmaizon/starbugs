@@ -1,6 +1,5 @@
 let scene, camera, renderer, player, enemies = [], bullets = [];
 let enemySpeed = 0.02;
-let controls;
 const enemyRows = 3, enemyCols = 8;
 const loader = new THREE.GLTFLoader();
 
@@ -12,21 +11,14 @@ document.addEventListener("DOMContentLoaded", function() {
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
+    
     // Adjust the camera position and rotation
-    camera.position.set(0, -5, 15); // Initial position of the camera
+    camera.position.set(0, -5, 15); // Move the camera closer and slightly above the player
     camera.lookAt(0, -10, 0); // Look at the player's initial position
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('game-container').appendChild(renderer.domElement);
-
-    // Initialize OrbitControls
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; // Enables inertia
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.maxPolarAngle = Math.PI / 2; // Prevent the camera from going below the ground
 
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
@@ -82,22 +74,22 @@ function resetGame() {
     }
 }
 
+function showModal(title, text) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-text').innerText = text;
+    document.getElementById('modal').style.display = 'flex';
+}
+
+function gameOver() {
+    showModal("Game Over", "Press 'Start' to play again.");
+}
+
 function animate() {
     requestAnimationFrame(animate);
     updateBullets();
     moveEnemies();
     checkCollisions();
-    controls.update(); // Update controls for damping
-    cameraFollowPlayer(); // Ensure the camera follows the player
     renderer.render(scene, camera);
-}
-
-// Function to make the camera follow the player from behind
-function cameraFollowPlayer() {
-    if (player) {
-        camera.position.set(player.position.x, player.position.y - 5, player.position.z + 15);
-        camera.lookAt(player.position);
-    }
 }
 
 function onKeyDown(event) {
