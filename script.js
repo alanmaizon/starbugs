@@ -1,10 +1,10 @@
 function init() {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000); // Increase FOV to 90
-
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    
     // Adjust the camera position and rotation
-    camera.position.set(0, -20, 30); // Move the camera further back and higher
-    camera.lookAt(0, 0, 0); // Ensure the camera looks at the center of the scene
+    camera.position.set(0, -5, 15); // Move the camera closer and slightly above the player
+    camera.lookAt(0, -10, 0); // Look at the player's initial position
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -20,7 +20,7 @@ function init() {
         player = gltf.scene;
         player.traverse(function(node) {
             if (node.isMesh) {
-                node.material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+                node.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
             }
         });
         player.position.set(0, -10, 0);
@@ -32,9 +32,12 @@ function init() {
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('touchstart', onTouchStart, false);
     document.addEventListener('touchmove', onTouchMove, false);
+}
 
-    // Adjust camera settings to ensure everything fits on the screen
-    camera.updateProjectionMatrix();
+function startGame() {
+    document.getElementById('modal').style.display = 'none';
+    resetGame();
+    animate();
 }
 
 function resetGame() {
@@ -49,7 +52,7 @@ function resetGame() {
                 const enemy = gltf.scene;
                 enemy.traverse(function(node) {
                     if (node.isMesh) {
-                        node.material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+                        node.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
                     }
                 });
                 enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0);
