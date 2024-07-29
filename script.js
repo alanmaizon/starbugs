@@ -36,6 +36,11 @@ function init() {
 
     loader.load('player.glb', function(gltf) {
         player = gltf.scene;
+        player.traverse(function(node) {
+            if (node.isMesh) {
+                node.material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+            }
+        });
         player.position.set(0, -10, 0);
         player.scale.set(0.5, 0.5, 0.5); // Adjust scale if necessary
         scene.add(player);
@@ -63,6 +68,11 @@ function resetGame() {
         for (let j = 0; j < enemyCols; j++) {
             loader.load('enemy.glb', function(gltf) {
                 const enemy = gltf.scene;
+                enemy.traverse(function(node) {
+                    if (node.isMesh) {
+                        node.material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+                    }
+                });
                 enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0);
                 enemy.scale.set(0.4, 0.4, 0.4); // Adjust scale if necessary
                 scene.add(enemy);
