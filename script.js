@@ -1,6 +1,6 @@
 function init() {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000); // Increase FOV to 90
 
     // Adjust the camera position and rotation
     camera.position.set(0, -20, 30); // Move the camera further back and higher
@@ -32,6 +32,9 @@ function init() {
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('touchstart', onTouchStart, false);
     document.addEventListener('touchmove', onTouchMove, false);
+
+    // Adjust camera settings to ensure everything fits on the screen
+    camera.updateProjectionMatrix();
 }
 
 function resetGame() {
