@@ -20,7 +20,7 @@ function init() {
         player = gltf.scene;
         player.traverse(function(node) {
             if (node.isMesh) {
-                node.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+                node.material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
             }
         });
         player.position.set(0, -10, 0);
@@ -52,7 +52,7 @@ function resetGame() {
                 const enemy = gltf.scene;
                 enemy.traverse(function(node) {
                     if (node.isMesh) {
-                        node.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+                        node.material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
                     }
                 });
                 enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0);
