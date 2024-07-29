@@ -25,7 +25,37 @@ function init() {
     player.position.set(0, -10, 0);
     scene.add(player);
 
-    // Create enemies
+    // Score display
+    const scoreDisplay = document.createElement('div');
+    scoreDisplay.style.position = 'absolute';
+    scoreDisplay.style.color = 'white';
+    scoreDisplay.style.top = '10px';
+    scoreDisplay.style.left = '10px';
+    scoreDisplay.innerHTML = `Score: ${score}`;
+    document.body.appendChild(scoreDisplay);
+
+    // Initialize modal
+    document.getElementById('start-button').addEventListener('click', startGame);
+}
+
+function startGame() {
+    resetGame();
+    document.getElementById('modal').style.display = 'none';
+    animate();
+}
+
+function resetGame() {
+    // Remove old enemies and bullets
+    enemies.forEach(enemy => scene.remove(enemy));
+    bullets.forEach(bullet => scene.remove(bullet));
+    enemies = [];
+    bullets = [];
+
+    // Reset score
+    score = 0;
+    updateScore();
+
+    // Create new enemies
     const enemyGeometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
     const enemyMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
     for (let i = 0; i < enemyRows; i++) {
@@ -36,23 +66,6 @@ function init() {
             enemies.push(enemy);
         }
     }
-
-    // Position camera
-    camera.position.z = 15;
-
-    // Score display
-    const scoreDisplay = document.createElement('div');
-    scoreDisplay.style.position = 'absolute';
-    scoreDisplay.style.color = 'white';
-    scoreDisplay.style.top = '10px';
-    scoreDisplay.style.left = '10px';
-    scoreDisplay.innerHTML = `Score: ${score}`;
-    document.body.appendChild(scoreDisplay);
-
-    // Add touch events
-    document.addEventListener('touchstart', onTouchStart, false);
-    document.addEventListener('touchmove', onTouchMove, false);
-    document.addEventListener('touchend', onTouchEnd, false);
 }
 
 function animate() {
@@ -123,6 +136,9 @@ function checkCollisions() {
                 enemies.splice(j, 1);
                 score += 100;
                 updateScore();
+                if (enemies.length === 0) {
+                    showModal("Game Over", `Your score is ${score}. Play again?`);
+                }
                 break;
             }
         }
@@ -134,33 +150,31 @@ function updateScore() {
     scoreDisplay.innerHTML = `Score: ${score}`;
 }
 
-// Touch controls
-let initialTouchX = null;
+function showModal(title, message) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-message').textContent = message;
+    document.getElementById('modal').style.display = 'block';
+}
 
 function onTouchStart(event) {
     if (event.touches.length === 1) {
-        initialTouchX = event.touches[0].clientX;
         shootBullet();
     }
 }
 
 function onTouchMove(event) {
-    if (event.touches.length === 1 && initialTouchX !== null) {
-        let currentTouchX = event.touches[0].clientX;
-        let deltaX = currentTouchX - initialTouchX;
-
-        // Move player
-        const speed = 0.05;
-        player.position.x += deltaX * speed;
-        player.position.x = Math.max(Math.min(player.position.x, 9), -9); // Stay within bounds
-        initialTouchX = currentTouchX; // Update the initial touch position
+    if (event.touches.length === 1) {
+        let touch = event.touches[0];
+        let screenWidth = window.innerWidth;
+        let touchX = (touch.clientX / screenWidth) * 20 - 10;
+        player.position.x = Math.max(Math.min(touchX, 9), -9); // Constrain within bounds
     }
 }
 
-function onTouchEnd(event) {
-    initialTouchX = null;
-}
-
 init();
-animate();
 document.addEventListener('keydown', onKeyDown);
+document.addEventListener('touchstart', onTouchStart, false);
+document.addEventListener('touchmove', onTouchMove, false);
+
+// Show modal initially
+showModal("Welcome", "Press 'Start' to begin the game.");
