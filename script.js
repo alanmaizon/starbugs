@@ -1,6 +1,7 @@
 let scene, camera, renderer, player, enemies = [], bullets = [];
 let enemySpeed = 0.02;
 const enemyRows = 3, enemyCols = 8;
+const loader = new THREE.GLTFLoader();
 
 document.addEventListener("DOMContentLoaded", function() {
     init();
@@ -8,29 +9,26 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function init() {
-    // Create scene
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 20; // Move the camera further back
+    camera.position.z = 20;
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    document.getElementById('game-container').appendChild(renderer.domElement);
 
-    // Add lights
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
 
-    // Create player
-    const playerGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5); // Smaller player
-    const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-    player = new THREE.Mesh(playerGeometry, playerMaterial);
-    player.position.set(0, -10, 0);
-    scene.add(player);
+    loader.load('player.glb', function(gltf) {
+        player = gltf.scene;
+        player.position.set(0, -10, 0);
+        player.scale.set(0.5, 0.5, 0.5); // Adjust scale if necessary
+        scene.add(player);
+    });
 
-    // Initialize modal
     document.getElementById('start-button').addEventListener('click', startGame);
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('touchstart', onTouchStart, false);
@@ -44,21 +42,20 @@ function startGame() {
 }
 
 function resetGame() {
-    // Remove old enemies and bullets
     enemies.forEach(enemy => scene.remove(enemy));
     bullets.forEach(bullet => scene.remove(bullet));
     enemies = [];
     bullets = [];
 
-    // Create new enemies
-    const enemyGeometry = new THREE.BoxGeometry(0.4, 0.4, 0.4); // Smaller enemies
-    const enemyMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
     for (let i = 0; i < enemyRows; i++) {
         for (let j = 0; j < enemyCols; j++) {
-            const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
-            enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0); // Adjusted spacing
-            scene.add(enemy);
-            enemies.push(enemy);
+            loader.load('enemy.glb', function(gltf) {
+                const enemy = gltf.scene;
+                enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0);
+                enemy.scale.set(0.4, 0.4, 0.4); // Adjust scale if necessary
+                scene.add(enemy);
+                enemies.push(enemy);
+            });
         }
     }
 }
