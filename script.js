@@ -1,17 +1,11 @@
-let scene, camera, renderer, player, enemies = [], bullets = [];
-let enemySpeed = 0.02;
-const enemyRows = 3, enemyCols = 8;
-const loader = new THREE.GLTFLoader();
-
-document.addEventListener("DOMContentLoaded", function() {
-    init();
-    showModal("Welcome", "Press 'Start' to begin the game.");
-});
-
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 20;
+    
+    // Adjust the camera position and rotation
+    camera.position.set(0, -5, 15); // Move the camera closer and slightly above the player
+    camera.lookAt(0, -10, 0); // Look at the player's initial position
+
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('game-container').appendChild(renderer.domElement);
