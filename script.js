@@ -1,13 +1,3 @@
-let scene, camera, renderer, player, enemies = [], bullets = [];
-let enemySpeed = 0.02;
-const enemyRows = 3, enemyCols = 8;
-const loader = new THREE.GLTFLoader();
-
-document.addEventListener("DOMContentLoaded", function() {
-    init();
-    showModal("Welcome", "Press 'Start' to begin the game.");
-});
-
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -30,7 +20,7 @@ function init() {
         player = gltf.scene;
         player.traverse(function(node) {
             if (node.isMesh) {
-                node.material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+                node.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
             }
         });
         player.position.set(0, -10, 0);
@@ -62,7 +52,7 @@ function resetGame() {
                 const enemy = gltf.scene;
                 enemy.traverse(function(node) {
                     if (node.isMesh) {
-                        node.material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+                        node.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
                     }
                 });
                 enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0);
@@ -72,16 +62,6 @@ function resetGame() {
             });
         }
     }
-}
-
-function showModal(title, text) {
-    document.getElementById('modal-title').innerText = title;
-    document.getElementById('modal-text').innerText = text;
-    document.getElementById('modal').style.display = 'flex';
-}
-
-function gameOver() {
-    showModal("Game Over", "Press 'Start' to play again.");
 }
 
 function animate() {
