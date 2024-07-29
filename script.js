@@ -1,12 +1,17 @@
 let scene, camera, renderer, player, enemies = [], bullets = [];
 let enemySpeed = 0.02;
-let score = 0;
 const enemyRows = 3, enemyCols = 8;
+
+document.addEventListener("DOMContentLoaded", function() {
+    init();
+    showModal("Welcome", "Press 'Start' to begin the game.");
+});
 
 function init() {
     // Create scene
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 20; // Move the camera further back
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -19,28 +24,22 @@ function init() {
     scene.add(directionalLight);
 
     // Create player
-    const playerGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const playerGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5); // Smaller player
     const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
     player = new THREE.Mesh(playerGeometry, playerMaterial);
     player.position.set(0, -10, 0);
     scene.add(player);
 
-    // Score display
-    const scoreDisplay = document.createElement('div');
-    scoreDisplay.style.position = 'absolute';
-    scoreDisplay.style.color = 'white';
-    scoreDisplay.style.top = '10px';
-    scoreDisplay.style.left = '10px';
-    scoreDisplay.innerHTML = `Score: ${score}`;
-    document.body.appendChild(scoreDisplay);
-
     // Initialize modal
     document.getElementById('start-button').addEventListener('click', startGame);
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('touchstart', onTouchStart, false);
+    document.addEventListener('touchmove', onTouchMove, false);
 }
 
 function startGame() {
-    resetGame();
     document.getElementById('modal').style.display = 'none';
+    resetGame();
     animate();
 }
 
@@ -51,17 +50,13 @@ function resetGame() {
     enemies = [];
     bullets = [];
 
-    // Reset score
-    score = 0;
-    updateScore();
-
     // Create new enemies
-    const enemyGeometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+    const enemyGeometry = new THREE.BoxGeometry(0.4, 0.4, 0.4); // Smaller enemies
     const enemyMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
     for (let i = 0; i < enemyRows; i++) {
         for (let j = 0; j < enemyCols; j++) {
             const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
-            enemy.position.set(j * 2 - 7, i * 2 + 5, 0);
+            enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0); // Adjusted spacing
             scene.add(enemy);
             enemies.push(enemy);
         }
@@ -92,7 +87,7 @@ function onKeyDown(event) {
 }
 
 function shootBullet() {
-    const bulletGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+    const bulletGeometry = new THREE.SphereGeometry(0.1, 8, 8); // Smaller bullets
     const bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
     const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
     bullet.position.set(player.position.x, player.position.y + 1, 0);
@@ -134,10 +129,8 @@ function checkCollisions() {
                 bullets.splice(i, 1);
                 scene.remove(enemies[j]);
                 enemies.splice(j, 1);
-                score += 100;
-                updateScore();
                 if (enemies.length === 0) {
-                    showModal("Game Over", `Your score is ${score}. Play again?`);
+                    showModal("Game Over", "You defeated all enemies! Play again?");
                 }
                 break;
             }
@@ -145,15 +138,10 @@ function checkCollisions() {
     }
 }
 
-function updateScore() {
-    const scoreDisplay = document.querySelector('div');
-    scoreDisplay.innerHTML = `Score: ${score}`;
-}
-
 function showModal(title, message) {
-    document.getElementById('modal-title').textContent = title;
-    document.getElementById('modal-message').textContent = message;
-    document.getElementById('modal').style.display = 'block';
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-message').innerText = message;
+    document.getElementById('modal').style.display = 'flex';
 }
 
 function onTouchStart(event) {
@@ -170,11 +158,3 @@ function onTouchMove(event) {
         player.position.x = Math.max(Math.min(touchX, 9), -9); // Constrain within bounds
     }
 }
-
-init();
-document.addEventListener('keydown', onKeyDown);
-document.addEventListener('touchstart', onTouchStart, false);
-document.addEventListener('touchmove', onTouchMove, false);
-
-// Show modal initially
-showModal("Welcome", "Press 'Start' to begin the game.");
