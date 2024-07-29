@@ -1,7 +1,18 @@
+let scene, camera, renderer, player, enemies = [], bullets = [];
+let enemySpeed = 0.02;
+let controls;
+const enemyRows = 3, enemyCols = 8;
+const loader = new THREE.GLTFLoader();
+
+document.addEventListener("DOMContentLoaded", function() {
+    init();
+    showModal("Welcome", "Press 'Start' to begin the game.");
+});
+
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    
+
     // Adjust the camera position and rotation
     camera.position.set(0, -5, 15); // Move the camera closer and slightly above the player
     camera.lookAt(0, -10, 0); // Look at the player's initial position
@@ -9,6 +20,13 @@ function init() {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('game-container').appendChild(renderer.domElement);
+
+    // Initialize OrbitControls
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // Enables inertia
+    controls.dampingFactor = 0.05;
+    controls.screenSpacePanning = false;
+    controls.maxPolarAngle = Math.PI / 2; // Prevent the camera from going below the ground
 
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
@@ -18,11 +36,6 @@ function init() {
 
     loader.load('player.glb', function(gltf) {
         player = gltf.scene;
-        player.traverse(function(node) {
-            if (node.isMesh) {
-                node.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-            }
-        });
         player.position.set(0, -10, 0);
         player.scale.set(0.5, 0.5, 0.5); // Adjust scale if necessary
         scene.add(player);
@@ -50,11 +63,6 @@ function resetGame() {
         for (let j = 0; j < enemyCols; j++) {
             loader.load('enemy.glb', function(gltf) {
                 const enemy = gltf.scene;
-                enemy.traverse(function(node) {
-                    if (node.isMesh) {
-                        node.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-                    }
-                });
                 enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0);
                 enemy.scale.set(0.4, 0.4, 0.4); // Adjust scale if necessary
                 scene.add(enemy);
@@ -69,6 +77,7 @@ function animate() {
     updateBullets();
     moveEnemies();
     checkCollisions();
+    controls.update(); // Update controls for damping
     renderer.render(scene, camera);
 }
 
