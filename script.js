@@ -2,7 +2,6 @@ let scene, camera, renderer, player, enemies = [], bullets = [];
 let enemySpeed = 0.02;
 const enemyRows = 3, enemyCols = 8;
 const loader = new THREE.GLTFLoader();
-scene.background = new THREE.Color(0xffffff);
 
 document.addEventListener("DOMContentLoaded", function() {
     init();
@@ -11,11 +10,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function init() {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000); // Increase FOV to 90
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-    // Adjust the camera position and rotation
-    camera.position.set(0, -20, 20); // Move the camera further back and higher
-    camera.lookAt(0, 0, 0); // Ensure the camera looks at the center of the scene
+    camera.position.set(0, -20, 20);
+    camera.lookAt(0, 0, 0);
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -27,6 +25,16 @@ function init() {
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
 
+    // Load the galaxy texture
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.load('galaxy.jpg', function(texture) {
+        const planeGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
+        const planeMaterial = new THREE.MeshBasicMaterial({ map: texture });
+        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.position.set(0, 0, -50); // Position it far enough in the background
+        scene.add(plane);
+    });
+
     loader.load('player.glb', function(gltf) {
         player = gltf.scene;
         player.traverse(function(node) {
@@ -35,18 +43,16 @@ function init() {
             }
         });
         player.position.set(0, -10, 0);
-        player.scale.set(1.5, 1.5, 1.5); // Adjust scale if necessary
+        player.scale.set(1.5, 1.5, 1.5);
         scene.add(player);
     });
 
-    // Ensure this line is present to attach the event listener
     document.getElementById('start-button').addEventListener('click', startGame);
 
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('touchstart', onTouchStart, false);
     document.addEventListener('touchmove', onTouchMove, false);
 
-    // Adjust camera settings to ensure everything fits on the screen
     camera.updateProjectionMatrix();
 }
 
@@ -72,7 +78,7 @@ function resetGame() {
                     }
                 });
                 enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0);
-                enemy.scale.set(1, 1, 1); // Adjust scale if necessary
+                enemy.scale.set(1, 1, 1);
                 scene.add(enemy);
                 enemies.push(enemy);
             });
@@ -114,7 +120,7 @@ function onKeyDown(event) {
 }
 
 function shootBullet() {
-    const bulletGeometry = new THREE.SphereGeometry(0.1, 8, 8); // Smaller bullets
+    const bulletGeometry = new THREE.SphereGeometry(0.1, 8, 8);
     const bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
     const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
     bullet.position.set(player.position.x, player.position.y + 1, 0);
@@ -182,18 +188,6 @@ function onTouchMove(event) {
         let touch = event.touches[0];
         let screenWidth = window.innerWidth;
         let touchX = (touch.clientX / screenWidth) * 20 - 10;
-        player.position.x = Math.max(Math.min(touchX, 9), -9); // Constrain within bounds
+        player.position.x = Math.max(Math.min(touchX, 9), -9);
     }
 }
-
-// Add Skybox
-const loader = new THREE.CubeTextureLoader();
-const skyboxTexture = loader.load([
-    'galaxy.jpg', // Replace with the path to your positive X texture
-    'galaxy.jpg', // Replace with the path to your negative X texture
-    'galaxy.jpg', // Replace with the path to your positive Y texture
-    'galaxy.jpg', // Replace with the path to your negative Y texture
-    'galaxy.jpg', // Replace with the path to your positive Z texture
-    'galaxy.jpg'  // Replace with the path to your negative Z texture
-]);
-scene.background = skyboxTexture;
