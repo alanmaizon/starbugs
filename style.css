@@ -1,11 +1,14 @@
+* {
+    background: url('night.gif');
+    background-size: cover;
+}
+
 body, html {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: url('night.gif');
-    background-size: cover;
 }
 
 #game-container {
