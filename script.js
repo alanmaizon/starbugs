@@ -34,7 +34,7 @@ function init() {
             }
         });
         player.position.set(0, -10, 0);
-        player.scale.set(0.5, 0.5, 0.5); // Adjust scale if necessary
+        player.scale.set(1.5, 1.5, 1.5); // Adjust scale if necessary
         scene.add(player);
     });
 
@@ -71,7 +71,7 @@ function resetGame() {
                     }
                 });
                 enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0);
-                enemy.scale.set(0.4, 0.4, 0.4); // Adjust scale if necessary
+                enemy.scale.set(1, 1, 1); // Adjust scale if necessary
                 scene.add(enemy);
                 enemies.push(enemy);
             });
