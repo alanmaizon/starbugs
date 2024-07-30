@@ -189,11 +189,11 @@ function onTouchMove(event) {
 // Add Skybox
 const loader = new THREE.CubeTextureLoader();
 const skyboxTexture = loader.load([
-    'night.gif', // Replace with the path to your positive X texture
-    'night.gif', // Replace with the path to your negative X texture
-    'night.gif', // Replace with the path to your positive Y texture
-    'night.gif', // Replace with the path to your negative Y texture
-    'night.gif', // Replace with the path to your positive Z texture
-    'night.gif'  // Replace with the path to your negative Z texture
+    'galaxy.jpg', // Replace with the path to your positive X texture
+    'galaxy.jpg', // Replace with the path to your negative X texture
+    'galaxy.jpg', // Replace with the path to your positive Y texture
+    'galaxy.jpg', // Replace with the path to your negative Y texture
+    'galaxy.jpg', // Replace with the path to your positive Z texture
+    'galaxy.jpg'  // Replace with the path to your negative Z texture
 ]);
 scene.background = skyboxTexture;
