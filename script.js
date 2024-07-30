@@ -2,6 +2,7 @@ let scene, camera, renderer, player, enemies = [], bullets = [];
 let enemySpeed = 0.02;
 const enemyRows = 3, enemyCols = 8;
 const loader = new THREE.GLTFLoader();
+scene.background = new THREE.Color(0xffffff);
 
 document.addEventListener("DOMContentLoaded", function() {
     init();
@@ -184,3 +185,15 @@ function onTouchMove(event) {
         player.position.x = Math.max(Math.min(touchX, 9), -9); // Constrain within bounds
     }
 }
+
+// Add Skybox
+const loader = new THREE.CubeTextureLoader();
+const skyboxTexture = loader.load([
+    'night.gif', // Replace with the path to your positive X texture
+    'night.gif', // Replace with the path to your negative X texture
+    'night.gif', // Replace with the path to your positive Y texture
+    'night.gif', // Replace with the path to your negative Y texture
+    'night.gif', // Replace with the path to your positive Z texture
+    'night.gif'  // Replace with the path to your negative Z texture
+]);
+scene.background = skyboxTexture;
