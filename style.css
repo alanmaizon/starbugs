@@ -4,14 +4,15 @@ body, html {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    background: url('night.gif');
+    background-size: cover;
 }
 
 #game-container {
     width: 100%;
     height: 100%;
     position: relative;
-    background: url('night.gif');
-    background-size: cover;
+    background-color: #000000;
     /* Ensure the game container has a background color */
 }
 
