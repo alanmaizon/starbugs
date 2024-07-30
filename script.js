@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function init() {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000); // Increase FOV to 90
+    camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 0.1, 1000); // Increase FOV to 90
 
     // Adjust the camera position and rotation
-    camera.position.set(0, -20, 30); // Move the camera further back and higher
+    camera.position.set(0, 0, 0); // Move the camera further back and higher
     camera.lookAt(0, 0, 0); // Ensure the camera looks at the center of the scene
 
     renderer = new THREE.WebGLRenderer();
