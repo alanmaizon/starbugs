@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
+    <title>3D Shooter Game</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
-    <div id="game-container"></div>
-    <div id="modal" class="modal">
+    <div id="modal">
         <div class="modal-content">
-            <h2 id="modal-title">Welcome</h2>
-            <p id="modal-text">Press 'Start' to begin the game.</p>
+            <h2 id="modal-title"></h2>
+            <p id="modal-message"></p>
             <button id="start-button">Start</button>
         </div>
     </div>
+    <div id="game-container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
