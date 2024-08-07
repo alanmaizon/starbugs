@@ -27,7 +27,7 @@ function init() {
 
     // Load the galaxy texture
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.load('galaxy.jpg', function(texture) {
+    textureLoader.load('static/models/galaxy.jpg', function(texture) {
         const planeGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
         const planeMaterial = new THREE.MeshBasicMaterial({ map: texture });
         const plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -35,7 +35,7 @@ function init() {
         scene.add(plane);
     });
 
-    loader.load('player.glb', function(gltf) {
+    loader.load('static/models/player.glb', function(gltf) {
         player = gltf.scene;
         player.traverse(function(node) {
             if (node.isMesh) {
@@ -70,7 +70,7 @@ function resetGame() {
 
     for (let i = 0; i < enemyRows; i++) {
         for (let j = 0; j < enemyCols; j++) {
-            loader.load('enemy.glb', function(gltf) {
+            loader.load('static/models/enemy.glb', function(gltf) {
                 const enemy = gltf.scene;
                 enemy.traverse(function(node) {
                     if (node.isMesh) {
@@ -186,8 +186,7 @@ function onTouchStart(event) {
 function onTouchMove(event) {
     if (event.touches.length === 1) {
         let touch = event.touches[0];
-        let screenWidth = window.innerWidth;
-        let touchX = (touch.clientX / screenWidth) * 20 - 10;
-        player.position.x = Math.max(Math.min(touchX, 9), -9);
+        let x = (touch.clientX / window.innerWidth) * 2 - 1;
+        player.position.x = x * 10;
     }
 }
