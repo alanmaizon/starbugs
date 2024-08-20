@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAT WARS</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/images.jpeg') }}">
+    <title>STARBUGS</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/image.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div id="modal" class="gala">
         <div class="modal-content">
-            <h2 id="modal-title">Start Game</h2>
-            <img src="{{ url_for('static', filename='images/images.jpeg') }}" alt="stat wars">
-            <p id="modal-message">Press the button below to start the game.</p>
-            <button id="start-button">Start</button>
+            <h2 id="modal-title"></h2>
+            <img src="{{ url_for('static', filename='images/logo.gif') }}" alt="Background Image">
+            <p id="modal-message"></p>
+            <button id="start-button">START</button>
         </div>
     </div>
     <div id="game-container"></div>
@@ -22,4 +22,3 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
-

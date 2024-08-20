@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'CustomFont'; /* Name your font family */
+    src: url('jedi.ttf'); /* Locate the .ttf file within your directory*/
+}
+
 .gala {
 background: url('../images/night.gif');
 }
@@ -19,6 +24,18 @@ body {
     /* Ensure the game container has a background color */
 }
 
+#modal-title {
+    font-family: 'CustomFont';
+    font-size: 3em;
+    color: #000000;
+    text-shadow:
+      2px 0 yellow,
+      0 -2px yellow,
+      -2px 0 yellow,
+      0 2px yellow;
+
+}
+
 #modal {
     display: flex;
     align-items: center;
@@ -32,8 +49,16 @@ body {
     z-index: 1;
 }
 
+.modal-content img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+}
 .modal-content {
-    background-color: #ffffff;
+    background-color: #000;
+    color:beige;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
@@ -46,8 +71,8 @@ body {
 #start-button {
     margin-top: 15px;
     padding: 10px 20px;
-    background-color: #00ff00;
-    border: none;
+    background-color: #000;
+    border: 3px solid yellow;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -56,5 +81,6 @@ body {
 }
 
 #start-button:hover {
-    background-color: #00cc00;
+    background-color: yellow;
+    color: #000;
 }

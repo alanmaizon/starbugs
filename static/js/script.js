@@ -1,18 +1,23 @@
+/**
+ * The code sets up a 3D space shooter game in JavaScript where the player controls a spaceship to
+ * shoot down enemy ships, with features like player movement, shooting bullets, enemy movement,
+ * collision detection, scoring, game over handling, and modals for instructions and game status.
+ */
 let scene, camera, renderer, player, enemies = [], bullets = [];
-let enemySpeed = 0.02;
+let enemySpeed = 0.01;
 const enemyRows = 3, enemyCols = 8;
 const loader = new THREE.GLTFLoader();
 
 document.addEventListener("DOMContentLoaded", function() {
     init();
-    showModal("Welcome", "Press 'Start' to begin the game.");
+    showModal("starbugs", "Press 'Start' to begin the game.");
 });
 
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-    camera.position.set(0, -20, 20);
+    camera.position.set(0, -15, 15);
     camera.lookAt(0, 0, 0);
 
     renderer = new THREE.WebGLRenderer();
@@ -25,25 +30,25 @@ function init() {
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
 
-    // Load the galaxy texture
+    // Load the skybox texture
     const textureLoader = new THREE.TextureLoader();
     textureLoader.load('static/models/galaxy.jpg', function(texture) {
-        const planeGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
-        const planeMaterial = new THREE.MeshBasicMaterial({ map: texture });
-        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.position.set(0, 0, -50); // Position it far enough in the background
-        scene.add(plane);
+        const skyboxGeometry = new THREE.BoxGeometry(100, 100, 100);
+        const skyboxMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide });
+        const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+        scene.add(skybox);
     });
 
     loader.load('static/models/player.glb', function(gltf) {
         player = gltf.scene;
         player.traverse(function(node) {
             if (node.isMesh) {
-                node.material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+                node.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
             }
         });
         player.position.set(0, -10, 0);
-        player.scale.set(1.5, 1.5, 1.5);
+        player.scale.set(0.2, 0.2, 0.2);
+        player.rotation.set(-Math.PI / 2, 0, 0);
         scene.add(player);
     });
 
@@ -74,11 +79,12 @@ function resetGame() {
                 const enemy = gltf.scene;
                 enemy.traverse(function(node) {
                     if (node.isMesh) {
-                        node.material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+                        node.material = new THREE.MeshStandardMaterial({ color: 0x888888 });
                     }
                 });
-                enemy.position.set(j * 1.5 - (enemyCols / 2), i * 1.5 + 5, 0);
-                enemy.scale.set(1, 1, 1);
+                enemy.position.set(j * 1.5 - (enemyCols / 2), i * 4 + 5, 0);
+                enemy.scale.set(0.1, 0.1, 0.1);
+                enemy.rotation.set(Math.PI / 2, 0, 0);
                 scene.add(enemy);
                 enemies.push(enemy);
             });
@@ -86,14 +92,28 @@ function resetGame() {
     }
 }
 
+
+function moveEnemies() {
+    let reverse = false;
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].position.x += enemySpeed;
+        if (enemies[i].position.x > 9 || enemies[i].position.x < -9) {
+            reverse = true;
+        }
+    }
+    if (reverse) {
+        enemySpeed = -enemySpeed;
+        for (let i = 0; i < enemies.length; i++) {
+            enemies[i].position.y -= 0.5;
+        }
+    }
+}
+
+
 function showModal(title, text) {
     document.getElementById('modal-title').innerText = title;
     document.getElementById('modal-text').innerText = text;
     document.getElementById('modal').style.display = 'flex';
-}
-
-function gameOver() {
-    showModal("Game Over", "Press 'Start' to play again.");
 }
 
 function animate() {
@@ -128,28 +148,13 @@ function shootBullet() {
     bullets.push(bullet);
 }
 
+
 function updateBullets() {
     for (let i = bullets.length - 1; i >= 0; i--) {
         bullets[i].position.y += 0.2;
         if (bullets[i].position.y > 15) {
             scene.remove(bullets[i]);
             bullets.splice(i, 1);
-        }
-    }
-}
-
-function moveEnemies() {
-    let reverse = false;
-    for (let i = 0; i < enemies.length; i++) {
-        enemies[i].position.x += enemySpeed;
-        if (enemies[i].position.x > 9 || enemies[i].position.x < -9) {
-            reverse = true;
-        }
-    }
-    if (reverse) {
-        enemySpeed = -enemySpeed;
-        for (let i = 0; i < enemies.length; i++) {
-            enemies[i].position.y -= 0.5;
         }
     }
 }
@@ -163,7 +168,7 @@ function checkCollisions() {
                 scene.remove(enemies[j]);
                 enemies.splice(j, 1);
                 if (enemies.length === 0) {
-                    showModal("Game Over", "You defeated all enemies! Play again?");
+                    showModal("Gameover", "You defeated all enemies! Play again?");
                 }
                 break;
             }
