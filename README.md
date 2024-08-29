@@ -66,7 +66,7 @@ The game has been tested for:
 - Enemy spawn, movement, and collision detection
 - Score updates and game over scenarios
 
-See the [Testing and Debugging Report](testing-and-debugging-report) for more details.
+See the [Testing and Debugging Report](testing-and-debugging-report.md) for more details.
 
 ## Known Issues
 
