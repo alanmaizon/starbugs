@@ -33,7 +33,7 @@ function init() {
     // Load the skybox texture
     const textureLoader = new THREE.TextureLoader();
     textureLoader.load('static/models/galaxy.jpg', function(texture) {
-        const skyboxGeometry = new THREE.BoxGeometry(100, 100, 100);
+        const skyboxGeometry = new THREE.SphereGeometry(45, 0, 1);
         const skyboxMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide });
         const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
         scene.add(skybox);
