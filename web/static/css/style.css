@@ -85,6 +85,19 @@ body {
     color: #000;
 }
 
+#score-display {
+    display: none;
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    font-family: 'CustomFont', sans-serif;
+    font-size: 1.5em;
+    color: #fff;
+    text-shadow: 0 0 8px yellow, 0 0 2px yellow;
+    z-index: 2;
+    pointer-events: none;
+}
+
 .night {
     -webkit-transform: rotateZ(140deg);
     transform: rotateZ(140deg);

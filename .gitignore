@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+*.swp
+
+# Xcode
+ios/starbugs/starbugs.xcodeproj/xcuserdata/
+ios/starbugs/starbugs.xcodeproj/project.xcworkspace/xcuserdata/
+build/
+DerivedData/
+*.xcuserstate
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.env
