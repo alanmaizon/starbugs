@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STARBUGS</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/image.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/png" href="static/images/image.png">
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
     <div id="modal" class="gala">
@@ -14,14 +14,15 @@
         </div>
         <div class="modal-content">
             <h2 id="modal-title"></h2>
-            <img src="{{ url_for('static', filename='images/logo.gif') }}" alt="Background Image">
+            <img src="static/images/logo.gif" alt="Background Image">
             <p id="modal-message"></p>
             <button id="start-button">START</button>
         </div>
     </div>
+    <div id="score-display"></div>
     <div id="game-container"></div>
-    <script src="{{ url_for('static', filename='js/three.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/GLTFLoader.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="static/js/three.min.js"></script>
+    <script src="static/js/GLTFLoader.js"></script>
+    <script src="static/js/script.js"></script>
 </body>
 </html>

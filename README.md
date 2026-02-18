@@ -3,10 +3,13 @@
 ## Table of Contents
 
 - [Introduction](#introduction)
+- [Project Structure](#project-structure)
 - [Features](#features)
-- [Installation](#installation)
+- [Web Version](#web-version)
+- [iOS Version](#ios-version)
 - [How to Play](#how-to-play)
 - [Controls](#controls)
+- [Deployment](#deployment)
 - [Testing](#testing)
 - [Known Issues](#known-issues)
 - [Contributing](#contributing)
@@ -14,50 +17,119 @@
 
 ## Introduction
 
-**STARBUGS** is an exciting 3D space shooter game built with Three.js, where players control a spaceship to shoot down enemy ships. The game features dynamic enemy movements, collision detection, scoring, and modals for instructions and game status.
+**STARBUGS** is an exciting 3D space shooter game where players control a spaceship to shoot down waves of enemy ships. The project includes both a **web version** (Three.js) and a native **iOS version** (SceneKit / SwiftUI).
+
+## Project Structure
+
+```
+starbugs/
+├── web/                  # Web version (static site)
+│   ├── index.html
+│   └── static/
+│       ├── css/
+│       ├── images/
+│       ├── js/
+│       └── models/
+├── ios/                  # iOS version (Xcode project)
+│   └── starbugs/
+│       ├── starbugs/
+│       │   └── GameView.swift
+│       ├── starbugs.xcodeproj/
+│       └── ...
+├── .github/workflows/    # GitHub Pages deployment
+├── planning-analysis-sheet.md
+├── testing-and-debugging-report.md
+└── README.md
+```
 
 ## Features
 
-- Real-time 3D graphics with Three.js
-- Player spaceship movement and shooting mechanics
-- Dynamic enemy spawn and movement
-- Collision detection and scoring system
-- Audio effects for background music, shooting, and collisions
-- Game over and restart functionalities
+Both versions share the same core gameplay:
 
-## Installation
+- Real-time 3D graphics (Three.js on web, SceneKit on iOS)
+- Player spaceship movement and shooting mechanics
+- Wave-based enemy spawning with random positioning
+- Collision detection between bullets and enemies
+- Player-enemy collision triggers game over
+- Score tracking
+- Game over and restart functionality
+
+### Web-Specific Features
+- Keyboard and touch controls
+- Galaxy skybox background
+- Responsive window resizing
+- Deployable to GitHub Pages as a static site
+
+### iOS-Specific Features
+- Native SwiftUI interface with SceneKit rendering
+- Liquid-glass style on-screen controls
+- Hyperspace particle effects
+- 3D USDZ model support
+- Smooth hold-to-move controls at 60 FPS
+
+## Web Version
+
+### Running Locally
 
 1. **Clone the Repository:**
 
    ```bash
    git clone https://github.com/alanmaizon/starbugs.git
-   cd starbugs
+   cd starbugs/web
    ```
 
-2. **Install the Dependencies:**
-
-   This game runs on a web server. Make sure to have Python or another local server installed.
+2. **Start a Local Server:**
 
    ```bash
    python -m http.server
    ```
 
-3. **Open the Game in a Browser:**
+3. **Open in Browser:**
 
-   Open your web browser and go to `http://localhost:8000`.
+   Navigate to `http://localhost:8000`.
+
+### Live Demo
+
+The web version is deployed via GitHub Pages. Visit the live site at:
+`https://alanmaizon.github.io/starbugs/`
+
+## iOS Version
+
+1. Open `ios/starbugs/starbugs.xcodeproj` in Xcode.
+2. Select a simulator or connected device.
+3. Build and run the project.
 
 ## How to Play
 
-- Start the game by clicking the "Start" button on the welcome screen.
-- Use the arrow keys or touch controls to move your spaceship left or right.
-- Press the space bar or tap the screen to shoot bullets.
-- Shoot down all enemies to win the game.
+- Start the game by clicking/tapping the **START** button.
+- Move your spaceship left or right to dodge enemies.
+- Shoot bullets to destroy incoming enemy waves.
+- Survive as long as possible and get the highest score!
 
 ## Controls
 
-- **Move Left**: Arrow Left Key / Swipe Left
-- **Move Right**: Arrow Right Key / Swipe Right
-- **Shoot**: Space Bar / Tap Screen
+### Web
+| Action     | Keyboard       | Touch           |
+|------------|----------------|-----------------|
+| Move Left  | Arrow Left / A | Drag left       |
+| Move Right | Arrow Right / D| Drag right      |
+| Shoot      | Space Bar      | Tap screen      |
+
+### iOS
+| Action     | Control                      |
+|------------|------------------------------|
+| Move Left  | Hold left on-screen button   |
+| Move Right | Hold right on-screen button  |
+| Shoot      | Tap anywhere on screen       |
+
+## Deployment
+
+The web version is automatically deployed to GitHub Pages when changes are pushed to the `main` branch under the `web/` directory.
+
+To enable GitHub Pages deployment:
+1. Go to your repository **Settings** → **Pages**.
+2. Set **Source** to **GitHub Actions**.
+3. Push changes to `main` to trigger the deployment workflow.
 
 ## Testing
 
