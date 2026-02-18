@@ -352,7 +352,7 @@ struct GameView: View {
             // particleSystem.particleRotation = 0 // No explicit property to set here, default is 0
             
             let node = SCNNode()
-            node.position = SCNVector3(0, 0, -2) // Slightly behind main action
+            node.position = SCNVector3(0, 5, 15) // Vanishing point at top-center of viewport
             node.addParticleSystem(particleSystem)
             return node
         }

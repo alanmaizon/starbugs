@@ -135,7 +135,7 @@ function createHyperspaceParticles() {
     hyperspaceParticles = new THREE.Points(geometry, material);
     hyperspaceParticles.userData.velocities = velocities;
     hyperspaceParticles.userData.lifetimes = lifetimes;
-    hyperspaceParticles.position.set(0, 0, -2); // Slightly behind main action (matching iOS)
+    hyperspaceParticles.position.set(0, 5, 15); // Vanishing point at top-center of viewport
     scene.add(hyperspaceParticles);
 }
 
@@ -156,7 +156,7 @@ function resetHyperspaceParticle(positions, velocities, lifetimes, index) {
     positions[index * 3 + 1] = y;
     positions[index * 3 + 2] = z;
 
-    // Velocity points inward toward the center (with variation matching iOS)
+    // Velocity points inward toward the center (vanishing point at top-center)
     var speed = HYPERSPACE_SPEED + (Math.random() - 0.5) * HYPERSPACE_SPEED_VAR * 2;
     var len = Math.sqrt(x * x + y * y + z * z);
     velocities[index * 3] = (-x / len) * speed;
