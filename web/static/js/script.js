@@ -12,6 +12,14 @@ let spawnInterval = null;
 let animationId = null;
 const loader = new THREE.GLTFLoader();
 
+// Hyperspace particle system
+let hyperspaceParticles = null;
+const HYPERSPACE_COUNT = 300;
+const HYPERSPACE_RADIUS = 21;
+const HYPERSPACE_SPEED = 22;
+const HYPERSPACE_SPEED_VAR = 7;
+let lastFrameTime = 0;
+
 // Track held keys for smooth movement
 const keysPressed = {};
 
@@ -46,6 +54,9 @@ function init() {
         scene.add(skybox);
     });
 
+    // Create hyperspace particle background (matching iOS version)
+    createHyperspaceParticles();
+
     loader.load('static/models/player.glb', function (gltf) {
         player = gltf.scene;
         player.traverse(function (node) {
@@ -77,10 +88,117 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+/**
+ * Create a hyperspace particle effect matching the iOS version.
+ * Particles are spawned on a sphere and streak inward to simulate
+ * flying through hyperspace.
+ */
+function createHyperspaceParticles() {
+    var positions = new Float32Array(HYPERSPACE_COUNT * 3);
+    var velocities = new Float32Array(HYPERSPACE_COUNT * 3);
+    var lifetimes = new Float32Array(HYPERSPACE_COUNT);
+
+    for (var i = 0; i < HYPERSPACE_COUNT; i++) {
+        resetHyperspaceParticle(positions, velocities, lifetimes, i);
+        // Stagger initial lifetimes so particles don't all appear at once
+        lifetimes[i] = Math.random() * 1.7;
+    }
+
+    var geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    // Create a small streak texture for particles
+    var canvas = document.createElement('canvas');
+    canvas.width = 4;
+    canvas.height = 64;
+    var ctx = canvas.getContext('2d');
+    var gradient = ctx.createLinearGradient(0, 0, 0, 64);
+    gradient.addColorStop(0, 'rgba(255,255,255,0)');
+    gradient.addColorStop(0.3, 'rgba(255,255,255,1)');
+    gradient.addColorStop(0.7, 'rgba(255,255,255,1)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 4, 64);
+
+    var streakTexture = new THREE.CanvasTexture(canvas);
+
+    var material = new THREE.PointsMaterial({
+        size: 0.4,
+        map: streakTexture,
+        transparent: true,
+        opacity: 0.7,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        color: 0xffffff
+    });
+
+    hyperspaceParticles = new THREE.Points(geometry, material);
+    hyperspaceParticles.userData.velocities = velocities;
+    hyperspaceParticles.userData.lifetimes = lifetimes;
+    hyperspaceParticles.position.set(0, 0, -2); // Slightly behind main action (matching iOS)
+    scene.add(hyperspaceParticles);
+}
+
+/**
+ * Reset a single hyperspace particle to a random position on a sphere.
+ */
+function resetHyperspaceParticle(positions, velocities, lifetimes, index) {
+    // Random point on a sphere of HYPERSPACE_RADIUS
+    var theta = Math.random() * Math.PI * 2;
+    var phi = Math.acos(2 * Math.random() - 1);
+    var r = HYPERSPACE_RADIUS;
+
+    var x = r * Math.sin(phi) * Math.cos(theta);
+    var y = r * Math.sin(phi) * Math.sin(theta);
+    var z = r * Math.cos(phi);
+
+    positions[index * 3] = x;
+    positions[index * 3 + 1] = y;
+    positions[index * 3 + 2] = z;
+
+    // Velocity points inward toward the center (with variation matching iOS)
+    var speed = HYPERSPACE_SPEED + (Math.random() - 0.5) * HYPERSPACE_SPEED_VAR * 2;
+    var len = Math.sqrt(x * x + y * y + z * z);
+    velocities[index * 3] = (-x / len) * speed;
+    velocities[index * 3 + 1] = (-y / len) * speed;
+    velocities[index * 3 + 2] = (-z / len) * speed;
+
+    lifetimes[index] = 0;
+}
+
+/**
+ * Update hyperspace particles each frame.
+ */
+function updateHyperspaceParticles(dt) {
+    if (!hyperspaceParticles) return;
+
+    var positions = hyperspaceParticles.geometry.attributes.position.array;
+    var velocities = hyperspaceParticles.userData.velocities;
+    var lifetimes = hyperspaceParticles.userData.lifetimes;
+
+    for (var i = 0; i < HYPERSPACE_COUNT; i++) {
+        lifetimes[i] += dt;
+
+        if (lifetimes[i] > 1.7) {
+            // Respawn particle at a new position on the sphere
+            resetHyperspaceParticle(positions, velocities, lifetimes, i);
+            continue;
+        }
+
+        // Move particle inward
+        positions[i * 3] += velocities[i * 3] * dt;
+        positions[i * 3 + 1] += velocities[i * 3 + 1] * dt;
+        positions[i * 3 + 2] += velocities[i * 3 + 2] * dt;
+    }
+
+    hyperspaceParticles.geometry.attributes.position.needsUpdate = true;
+}
+
 function startGame() {
     document.getElementById('modal').style.display = 'none';
     resetGame();
     gameRunning = true;
+    lastFrameTime = 0;
     updateScoreDisplay();
     animate();
     startSpawningWaves();
@@ -194,9 +312,16 @@ function showModal(title, message) {
     if (el) el.style.display = 'none';
 }
 
-function animate() {
+function animate(time) {
     if (!gameRunning) return;
     animationId = requestAnimationFrame(animate);
+
+    var dt = lastFrameTime ? (time - lastFrameTime) / 1000 : 0.016;
+    lastFrameTime = time;
+    // Clamp dt to avoid large jumps
+    if (dt > 0.1) dt = 0.016;
+
+    updateHyperspaceParticles(dt);
     handleSmoothMovement();
     updateBullets();
     moveEnemies();
