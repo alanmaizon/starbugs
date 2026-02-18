@@ -373,8 +373,8 @@ struct GameView: View {
             // CAMERA
             let cameraNode = SCNNode()
             cameraNode.camera = SCNCamera()
-            cameraNode.position = SCNVector3(0, -15, 15)
-            cameraNode.look(at: SCNVector3(0, 0, 0))
+            cameraNode.position = SCNVector3(0, -20, 20)
+            cameraNode.look(at: SCNVector3(0, 5, 0))
             scene.rootNode.addChildNode(cameraNode)
 
             let hyperspaceNode = makeHyperspaceEffectNode(scene: scene)
