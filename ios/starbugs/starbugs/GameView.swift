@@ -287,19 +287,17 @@ struct GameView: View {
                     let enemy = SCNNode()
                     var contentNode: SCNNode?
 
-                    if let modelScene = SCNScene(named: "art.scnassets/BUTTERFLY.usdz"),
-                       let modelNode = modelScene.rootNode.childNodes.first {
-                        let (min, max) = modelNode.boundingBox
-                        let center = SCNVector3(
-                            (max.x + min.x) / 2,
-                            (max.y + min.y) / 2,
-                            (max.z + min.z) / 2
-                        )
-                        modelNode.pivot = SCNMatrix4MakeTranslation(center.x, center.y, center.z)
-                        modelNode.position = SCNVector3Zero
-                        modelNode.scale = SCNVector3(0.01, 0.01, 0.01)
-                        modelNode.eulerAngles = SCNVector3(Float.pi/2, 0, 0)
-                        contentNode = modelNode
+                    if let modelScene = SCNScene(named: "art.scnassets/enemy.usdz") {
+                        // Wrap the loaded nodes so game transforms don't clobber
+                        // the normalization transform baked into the asset.
+                        // The model is normalized to a 1-unit bounding box.
+                        let wrapper = SCNNode()
+                        for child in modelScene.rootNode.childNodes {
+                            wrapper.addChildNode(child)
+                        }
+                        wrapper.scale = SCNVector3(1.2 * enemyScale, 1.2 * enemyScale, 1.2 * enemyScale)
+                        wrapper.eulerAngles = SCNVector3(Float.pi/2, 0, 0)
+                        contentNode = wrapper
                     } else {
                         let cube = SCNNode(geometry: SCNBox(width: 0.8, height: 0.8, length: 0.8, chamferRadius: 0))
                         cube.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
@@ -398,12 +396,18 @@ struct GameView: View {
 
             // PLAYER
             let player = SCNNode()
-            let playerScale: Float = 4
-            if let modelScene = SCNScene(named: "art.scnassets/player.usdc"),
-                let modelNode = modelScene.rootNode.childNodes.first {
-                modelNode.scale = SCNVector3(playerScale, playerScale, playerScale)
-                modelNode.eulerAngles = SCNVector3(0, 0, Float.pi)
-                player.addChildNode(modelNode)
+            let playerScale: Float = 1.6
+            if let modelScene = SCNScene(named: "art.scnassets/player.usdz") {
+                // Wrap the loaded nodes so game transforms don't clobber the
+                // normalization transform baked into the asset.
+                // The model is normalized to a 1-unit bounding box.
+                let wrapper = SCNNode()
+                for child in modelScene.rootNode.childNodes {
+                    wrapper.addChildNode(child)
+                }
+                wrapper.scale = SCNVector3(playerScale, playerScale, playerScale)
+                wrapper.eulerAngles = SCNVector3(-Float.pi/2, 0, 0)
+                player.addChildNode(wrapper)
             } else {
                 // Fallback to capsule if model fails to load
                 let fallback = SCNNode(geometry: SCNCapsule(capRadius: 0.4, height: 1.0))
